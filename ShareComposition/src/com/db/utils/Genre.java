@@ -6,29 +6,22 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Instrument {
+public class Genre {
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	long id;
 	@Persistent
-	String value;
-	
-	public Instrument() {
-	}
-	public Instrument(String value) {
-		this.value = value;
-	}
-	public String getValue() {
-		return value;
-	}
+	String genre;
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public void setValue(String value) {
-		this.value = value;
+	public String getGenre() {
+		return genre;
 	}
-
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
 }
