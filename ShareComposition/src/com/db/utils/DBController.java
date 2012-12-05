@@ -3,6 +3,10 @@ package com.db.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -20,7 +24,7 @@ public class DBController {
 	
 	
 	private static DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	
+	private static final PersistenceManagerFactory PMF=JDOHelper.getPersistenceManagerFactory("jdo.properties");
 	
 	
 	public List<ClipRecord> getClips(){
@@ -75,23 +79,36 @@ public class DBController {
 		return false;
 	}
 	
-	public boolean addGenre(String genre){
-		Query query = new Query("Instrument");
+	public boolean addGenre(String genreStr){
+//		Query query = new Query("Genre");
+//		
+//		Filter nameFilter =
+//				  new FilterPredicate("name",
+//				                      FilterOperator.EQUAL,
+//				                      genre);
+//		query.setFilter(nameFilter);
+//        PreparedQuery pq = datastore.prepare(query);
+//        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+//		if(detailList.size()==0){
+//			Entity genreEntity = new Entity("Genre");
+//			genreEntity.setProperty("name", genre );
+//			datastore.put(genreEntity);
+//			
+//			return true;
+//		}
+		PersistenceManager pm = PMF.getPersistenceManager();
+
+        Genre genre= new Genre(genreStr);
+
+        try {
+            pm.makePersistent(genre);
+        } finally {
+            pm.close();
+        }
 		
-		Filter nameFilter =
-				  new FilterPredicate("name",
-				                      FilterOperator.EQUAL,
-				                      genre);
-		query.setFilter(nameFilter);
-        PreparedQuery pq = datastore.prepare(query);
-        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
-		if(detailList.size()==0){
-			Entity genreEntity = new Entity("Genre");
-			genreEntity.setProperty("name", genre );
-			datastore.put(genreEntity);
-			
-			return true;
-		}
+		
+		
+		
 		return false;
 	}
 	

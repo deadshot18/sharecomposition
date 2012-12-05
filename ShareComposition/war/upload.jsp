@@ -37,7 +37,7 @@
 			    {
 					Instrument instrument = instruments.get(i);
 			        %>
-					<option value="<%out.print(instrument.getKey());%>">
+					<option value="<%out.print(instrument.getId());%>">
 					<%=instrument.getValue()%></option>
 					<%
 			    }
@@ -46,6 +46,17 @@
 		</select> <br /> Key: <select name="key">
 		</select> <br /> Tempo: <select name="tempo">
 		</select> <br /> <input type="file" name="myFile"> <br /> <input
+			type="submit" value="Submit">
+	</form>
+	<form action="/addoptions"
+		method="get" enctype="multipart/form-data">
+		<select name="addoption">
+			<option value="genre">Genre</option>
+			<option value="key">Key</option>
+			<option value="instrument">Instrument</option>
+		</select>
+		<input type="text" name="info">
+		  <input
 			type="submit" value="Submit">
 	</form>
 </body>

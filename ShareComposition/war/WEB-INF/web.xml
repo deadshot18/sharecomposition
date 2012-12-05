@@ -22,7 +22,17 @@
     <servlet-name>GetClips</servlet-name>
     <servlet-class>com.musicproj.server.GetClips</servlet-class>
   </servlet>
+  
+  <servlet>
+    <servlet-name>AddOptions</servlet-name>
+    <servlet-class>com.musicproj.server.AddOptions</servlet-class>
+  </servlet>
  
+ <servlet-mapping>
+    <servlet-name>AddOptions</servlet-name>
+    <url-pattern>/addoptions</url-pattern>
+  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>Upload</servlet-name>
     <url-pattern>/upload</url-pattern>

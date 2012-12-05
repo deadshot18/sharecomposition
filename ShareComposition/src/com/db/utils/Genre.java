@@ -7,6 +7,15 @@ import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
 public class Genre {
+	public Genre() {
+	}
+	
+	
+	public Genre(String genre) {
+		this.genre = genre;
+	}
+
+
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	long id;
