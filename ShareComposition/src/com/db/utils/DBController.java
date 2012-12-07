@@ -1,15 +1,13 @@
 package com.db.utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -24,9 +22,16 @@ public class DBController {
 	
 	
 	private static DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	private static final PersistenceManagerFactory PMF=JDOHelper.getPersistenceManagerFactory("jdo.properties");
-	
-	
+	private DBController() {
+		
+	}
+	static class DBControllerHolder{
+		static DBController instance= new DBController();
+		
+	}
+	public static DBController getInstane(){
+		return DBControllerHolder.instance;
+	}
 	public List<ClipRecord> getClips(){
 		List<ClipRecord> clipList = new ArrayList<ClipRecord>();
 		
@@ -43,10 +48,17 @@ public class DBController {
         	ClipRecord cr = new ClipRecord();
         	cr.setId(detailKey.toString());
         	cr.setInfo((String) entity.getProperty("info"));
-        	cr.setGenre((String) entity.getProperty("genre"));
-        	cr.setInstrument((String) entity.getProperty("instrument"));
-        	cr.setKey((String) entity.getProperty("key"));
-        	cr.setTempo((String) entity.getProperty("tempo"));
+        	
+        	try {
+				cr.setGenre((String) getItemNameFromTable("Genre",(long)entity.getProperty("genre")));
+				cr.setGenre((String) getItemNameFromTable("Instrument",(long)entity.getProperty("instrument")));
+				cr.setGenre((String) getItemNameFromTable("Key",(long)entity.getProperty("key")));
+				cr.setGenre((String) getItemNameFromTable("Tempo",(long)entity.getProperty("tempo")));
+			} catch (EntityNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				continue;
+			}
         	cr.setUploader((String) entity.getProperty("uploader"));
         	cr.setUpdateDate((String) entity.getProperty("uploadDate"));
         	cr.setUpdateTime((String) entity.getProperty("uploadTime"));
@@ -80,40 +92,29 @@ public class DBController {
 	}
 	
 	public boolean addGenre(String genreStr){
-//		Query query = new Query("Genre");
-//		
-//		Filter nameFilter =
-//				  new FilterPredicate("name",
-//				                      FilterOperator.EQUAL,
-//				                      genre);
-//		query.setFilter(nameFilter);
-//        PreparedQuery pq = datastore.prepare(query);
-//        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
-//		if(detailList.size()==0){
-//			Entity genreEntity = new Entity("Genre");
-//			genreEntity.setProperty("name", genre );
-//			datastore.put(genreEntity);
-//			
-//			return true;
-//		}
-		PersistenceManager pm = PMF.getPersistenceManager();
-
-        Genre genre= new Genre(genreStr);
-
-        try {
-            pm.makePersistent(genre);
-        } finally {
-            pm.close();
-        }
+		Query query = new Query("Genre");
 		
-		
+		Filter nameFilter =
+				  new FilterPredicate("name",
+				                      FilterOperator.EQUAL,
+				                      genreStr);
+		query.setFilter(nameFilter);
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+		if(detailList.size()==0){
+			Entity genreEntity = new Entity("Genre");
+			genreEntity.setProperty("name", genreStr );
+			datastore.put(genreEntity);
+			
+			return true;
+		}
 		
 		
 		return false;
 	}
 	
 	public boolean addKey(String key){
-		Query query = new Query("Instrument");
+		Query query = new Query("MusicKey");
 		
 		Filter nameFilter =
 				  new FilterPredicate("name",
@@ -123,7 +124,7 @@ public class DBController {
         PreparedQuery pq = datastore.prepare(query);
         List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
 		if(detailList.size()==0){
-			Entity keyEntity = new Entity("Genre");
+			Entity keyEntity = new Entity("MusicKey");
 			keyEntity.setProperty("name", key );
 			datastore.put(keyEntity);
 			
@@ -131,37 +132,126 @@ public class DBController {
 		}
 		return false;
 	}
-	
-	public static String [] getListOfGenres(){
+	public boolean addTempo(String tempo){
+		Query query = new Query("Tempo");
 		
-		String [] genres={
-		"African",
-		"Asian",
-		"Avant-Garde",
-		"Blues",
-		"Brazilian Music",
-		"Classic",
-		"Comedy music",
-		"Country",
-		"Dance",
-		"Electronic",
-		"Metal",
-		"Modern folk",
-		"Hip Hop",
-		"Jazz",
-		"Latin American",
-		"Opera",
-		"Pop",
-		"R&B",
-		"Rock",
-		"Ska",
-		"Other",
-		};
-		return genres;
+		Filter nameFilter =
+				  new FilterPredicate("name",
+				                      FilterOperator.EQUAL,
+				                      tempo);
+		query.setFilter(nameFilter);
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+		if(detailList.size()==0){
+			Entity keyEntity = new Entity("Tempo");
+			keyEntity.setProperty("name", tempo );
+			datastore.put(keyEntity);
+			
+			return true;
+		}
+		return false;
+	}
+	public long getItemIdFromTable(String table,String key){
+		Query query = new Query(key);
+		
+		Filter nameFilter =
+				  new FilterPredicate("name",
+				                      FilterOperator.EQUAL,
+				                      key);
+		query.setFilter(nameFilter);
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+        return detailList.get(0).getKey().getId();
+	}
+	public String getItemNameFromTable(String table,long id) throws EntityNotFoundException{
+		Key detailKey = KeyFactory.createKey(table,id);
+        return (String) datastore.get(detailKey).getProperty("name");
 	}
 	
-public static ArrayList<Instrument> getListOfInstruments(){
-	ArrayList<Instrument> instruments= new ArrayList<Instrument>();
+	public ArrayList<Genre> getListOfGenres(){
+		Query query = new Query("Genre");
+		ArrayList<Genre> genres= new ArrayList<Genre>();
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+        for (Iterator iterator = detailList.iterator(); iterator.hasNext();) {
+			Entity entity = (Entity) iterator.next();
+			String genre=(String)entity.getProperty("name");
+			long id=entity.getKey().getId();
+			genres.add(new Genre(id,genre));
+		}
+        return genres;
+	}
+	public ArrayList<MusicKey> getListOfKeys(){
+		Query query = new Query("MusicKey");
+		ArrayList<MusicKey> keys= new ArrayList<MusicKey>();
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+        for (Iterator iterator = detailList.iterator(); iterator.hasNext();) {
+			Entity entity = (Entity) iterator.next();
+			String genre=(String)entity.getProperty("name");
+			long id=entity.getKey().getId();
+			keys.add(new MusicKey(id,genre));
+		}
+        return keys;
+	}
+	public ArrayList<Instrument> getListOfInstruments(){
+		Query query = new Query("Instrument");
+		ArrayList<Instrument> instruments= new ArrayList<Instrument>();
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+        for (Iterator iterator = detailList.iterator(); iterator.hasNext();) {
+			Entity entity = (Entity) iterator.next();
+			String genre=(String)entity.getProperty("name");
+			long id=entity.getKey().getId();
+			instruments.add(new Instrument(id,genre));
+		}
+        return instruments;
+	}
+	
+	public ArrayList<Tempo> getListOfTempos(){
+		Query query = new Query("Tempo");
+		ArrayList<Tempo> tempos= new ArrayList<Tempo>();
+        PreparedQuery pq = datastore.prepare(query);
+        List<Entity> detailList = pq.asList(FetchOptions.Builder.withLimit(100).offset(0));
+        for (Iterator iterator = detailList.iterator(); iterator.hasNext();) {
+			Entity entity = (Entity) iterator.next();
+			String genre=(String)entity.getProperty("name");
+			long id=entity.getKey().getId();
+			tempos.add(new Tempo(id,genre));
+		}
+        return tempos;
+	}
+//	public static String [] getListOfGenres(){
+//		
+//		String [] genres={
+//		"African",
+//		"Asian",
+//		"Avant-Garde",
+//		"Blues",
+//		"Brazilian Music",
+//		"Classic",
+//		"Comedy music",
+//		"Country",
+//		"Dance",
+//		"Electronic",
+//		"Metal",
+//		"Modern folk",
+//		"Hip Hop",
+//		"Jazz",
+//		"Latin American",
+//		"Opera",
+//		"Pop",
+//		"R&B",
+//		"Rock",
+//		"Ska",
+//		"Other",
+//		};
+//		return genres;
+//	}
+	
+	
+//public static ArrayList<Instrument> getListOfInstruments(){
+//	ArrayList<Instrument> instruments= new ArrayList<Instrument>();
 //	instruments.add(new Instrument("12g","12-string guitar"));
 //	instruments.add(new Instrument("42g","42-string Pikasa guitar"));
 //	instruments.add(new Instrument("acc","Accordion"));
@@ -356,8 +446,8 @@ public static ArrayList<Instrument> getListOfInstruments(){
 //	instruments.add(new Instrument("wbk","Woodblock"));
 //	instruments.add(new Instrument("ww","Woodwinds"));
 //	instruments.add(new Instrument("xyl","Xylophone"));
-		return instruments;
-	}
+//		return instruments;
+//	}
 
 
 }

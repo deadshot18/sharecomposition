@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 public class GetClips  extends HttpServlet {
 	
-	DBController dbController = new DBController();
+	DBController dbController = DBController.getInstane();
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 		    throws IOException {

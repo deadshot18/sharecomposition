@@ -12,11 +12,11 @@ import com.google.gson.Gson;
 
 public class AddOptions  extends HttpServlet {
 	
-	DBController dbController = new DBController();
+	DBController dbController = DBController.getInstane();
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 		    throws IOException {
-		String option=req.getParameter("name");
+		String option=req.getParameter("addoption");
 		if(option.compareTo("key")==0){
 			dbController.addKey(req.getParameter("info"));
 			
@@ -25,10 +25,14 @@ public class AddOptions  extends HttpServlet {
 			dbController.addInstrument(req.getParameter("info"));
 			
 		}
+		else if(option.compareTo("tempo")==0){
+			dbController.addTempo(req.getParameter("info"));
+			
+		}
 		else{
 			dbController.addGenre(req.getParameter("info"));
 			
 		}
-		
+		res.sendRedirect("/upload.jsp");		
 	}
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.db.utils.DBController;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -33,7 +34,7 @@ public class Upload extends HttpServlet {
         } else {
         	Entity clipRecord = new Entity("clipRecord", blobKey.getKeyString());
         	clipRecord.setProperty("info", req.getParameter("info"));
-        	clipRecord.setProperty("genre", req.getParameter("genre"));
+        	clipRecord.setProperty("genre",  req.getParameter("genre"));
         	clipRecord.setProperty("instrument", req.getParameter("instrument"));
         	clipRecord.setProperty("key", req.getParameter("key"));
         	clipRecord.setProperty("tempo", req.getParameter("tempo"));

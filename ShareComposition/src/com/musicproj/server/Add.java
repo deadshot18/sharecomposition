@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 public class Add  extends HttpServlet {
 	
-	DBController dbController = new DBController();
+	DBController dbController = DBController.getInstane();
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 		    throws IOException {

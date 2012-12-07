@@ -1,11 +1,6 @@
 package com.db.utils;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
-@PersistenceCapable
 public class Genre {
 	public Genre() {
 	}
@@ -14,12 +9,11 @@ public class Genre {
 	public Genre(String genre) {
 		this.genre = genre;
 	}
-
-
-	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	public Genre(long id,String genre) {
+		this.id=id;
+		this.genre = genre;
+	}
 	long id;
-	@Persistent
 	String genre;
 	public long getId() {
 		return id;

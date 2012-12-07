@@ -1,16 +1,7 @@
 package com.db.utils;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-@PersistenceCapable
 public class Instrument {
-	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	long id;
-	@Persistent
 	String value;
 	
 	public Instrument() {
@@ -20,6 +11,11 @@ public class Instrument {
 	}
 	public String getValue() {
 		return value;
+	}
+	public Instrument(long id, String value) {
+		super();
+		this.id = id;
+		this.value = value;
 	}
 	public long getId() {
 		return id;
