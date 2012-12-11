@@ -18,7 +18,6 @@ public class GetClips  extends HttpServlet {
 		    throws IOException {
 		List<ClipRecord> records = dbController.getClips();
 		String json = new Gson().toJson(records);
-		
 		res.setContentType("application/json");
 		res.setCharacterEncoding("UTF-8");
 		res.getWriter().write(json);

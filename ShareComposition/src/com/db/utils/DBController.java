@@ -50,10 +50,10 @@ public class DBController {
         	cr.setInfo((String) entity.getProperty("info"));
         	
         	try {
-				cr.setGenre((String) getItemNameFromTable("Genre",(long)entity.getProperty("genre")));
-				cr.setGenre((String) getItemNameFromTable("Instrument",(long)entity.getProperty("instrument")));
-				cr.setGenre((String) getItemNameFromTable("Key",(long)entity.getProperty("key")));
-				cr.setGenre((String) getItemNameFromTable("Tempo",(long)entity.getProperty("tempo")));
+				cr.setGenre((String) getItemNameFromTable("Genre",new Long((String)entity.getProperty("genre"))));
+				cr.setInstrument((String) getItemNameFromTable("Instrument",new Long((String)entity.getProperty("instrument"))));
+				cr.setKey((String) getItemNameFromTable("MusicKey",new Long((String)entity.getProperty("key"))));
+				cr.setTempo((String) getItemNameFromTable("Tempo",new Long((String)entity.getProperty("tempo"))));
 			} catch (EntityNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -165,7 +165,9 @@ public class DBController {
 	}
 	public String getItemNameFromTable(String table,long id) throws EntityNotFoundException{
 		Key detailKey = KeyFactory.createKey(table,id);
-        return (String) datastore.get(detailKey).getProperty("name");
+		Entity entity=datastore.get(detailKey);
+		String t=(String) entity.getProperty("name");
+        return t;
 	}
 	
 	public ArrayList<Genre> getListOfGenres(){

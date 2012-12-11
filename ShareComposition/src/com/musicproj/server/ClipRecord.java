@@ -25,6 +25,14 @@ public class ClipRecord {
 	String info;
 	String genre;
 	String instrument;
+	@Override
+	public String toString() {
+		return "ClipRecord [id=" + id + ", info=" + info + ", genre=" + genre
+				+ ", instrument=" + instrument + ", key=" + key + ", tempo="
+				+ tempo + ", uploader=" + uploader + ", updateDate="
+				+ updateDate + ", updateTime=" + updateTime + ", rating="
+				+ rating + "]";
+	}
 	String key;
 	String tempo;
 	String uploader;
